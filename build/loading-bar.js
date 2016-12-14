@@ -96,7 +96,7 @@ angular.module('cfp.loadingBarInterceptor', ['cfp.loadingBar'])
 
 
       return {
-        'request': function(config) {
+        request: function(config) {
           // Check to make sure this request hasn't already been cached and that
           // the requester didn't explicitly ask us to ignore this request:
           if (!config.ignoreLoadingBar && !isCached(config)) {
@@ -112,16 +112,14 @@ angular.module('cfp.loadingBarInterceptor', ['cfp.loadingBar'])
           return config;
         },
 
-        'response': function(response) {
+        response: function(response) {
           if (!response || !response.config) {
-            $log.error('Broken interceptor detected: Config object not supplied in response:\n https://github.com/chieffancypants/angular-loading-bar/pull/50');
-            return response;
+            response = {config: {}};
           }
 
           if (!response.config.ignoreLoadingBar && !isCached(response.config)) {
             reqsCompleted++;
             if (reqsCompleted >= reqsTotal) {
-              $rootScope.$broadcast('cfpLoadingBar:loaded', {url: response.config.url, result: response});
               setComplete();
             } else {
               cfpLoadingBar.set(reqsCompleted / reqsTotal);
@@ -130,16 +128,14 @@ angular.module('cfp.loadingBarInterceptor', ['cfp.loadingBar'])
           return response;
         },
 
-        'responseError': function(rejection) {
-          if (!rejection || !rejection.config) {
-            $log.error('Broken interceptor detected: Config object not supplied in rejection:\n https://github.com/chieffancypants/angular-loading-bar/pull/50');
-            return $q.reject(rejection);
+        responseError: function(rejection) {
+          if (!rejection || !response.config) {
+            rejection = {config: {}};
           }
 
           if (!rejection.config.ignoreLoadingBar && !isCached(rejection.config)) {
             reqsCompleted++;
             if (reqsCompleted >= reqsTotal) {
-              $rootScope.$broadcast('cfpLoadingBar:loaded', {url: rejection.config.url, result: rejection});
               setComplete();
             } else {
               cfpLoadingBar.set(reqsCompleted / reqsTotal);
