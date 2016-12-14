@@ -113,8 +113,11 @@ angular.module('cfp.loadingBarInterceptor', ['cfp.loadingBar'])
         },
 
         response: function(response) {
-          if (!response || !response.config) {
-            response = {config: {}};
+          if (!response) {
+            response = {};
+          }
+          if (!response.config) {
+            response.config = {};
           }
 
           if (!response.config.ignoreLoadingBar && !isCached(response.config)) {
@@ -129,8 +132,11 @@ angular.module('cfp.loadingBarInterceptor', ['cfp.loadingBar'])
         },
 
         responseError: function(rejection) {
-          if (!rejection || !response.config) {
-            rejection = {config: {}};
+          if (!rejection) {
+            rejection = {};
+          }
+          if (!rejection.config) {
+            rejection.config = {};
           }
 
           if (!rejection.config.ignoreLoadingBar && !isCached(rejection.config)) {
